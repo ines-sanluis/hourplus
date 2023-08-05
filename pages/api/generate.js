@@ -51,7 +51,7 @@ export default async function (req, res) {
     const completion = await openai.createCompletion({
       model: "text-davinci-003", // ID of the model to use.
       prompt: generatePrompt(input), // The prompt to generate completions for.
-      temperature: 0.6, // Models the randomness and thus the creativity of the completions. 0 = deterministic, 1 = very creative.
+      temperature: 1, // Models the randomness and thus the creativity of the completions. 0 = deterministic, 1 = very creative.
       max_tokens: 1000, // The maximum number of tokens to generate in the completion.
     });
 

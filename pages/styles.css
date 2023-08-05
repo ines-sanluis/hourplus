@@ -1,4 +1,10 @@
 body {
     margin: 0;
     font-family: "Helvetica Neue", Arial, sans-serif;
+    padding: 20px;
+}
+
+input[type="number"] {
+    padding: 20px;
+    border-radius: 12px;
 }
