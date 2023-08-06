@@ -28,6 +28,7 @@
   gap: 0.4rem;
 }
 
+
 @media (max-width: 768px) {
   .inputs {
     gap: 16px;
