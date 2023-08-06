@@ -31,15 +31,7 @@ main {
     display: flex;
     gap: 16rem;
 }
-button {
-    cursor: pointer;
-    padding: 0;
-    background: none;
-    border: none;
-}
-button:hover{
-    transform: scale(1.02);
-}
+
 @media (max-width: 768px) {
     main {
         flex-direction: column-reverse;

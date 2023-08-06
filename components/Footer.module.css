@@ -3,15 +3,13 @@
     justify-content: space-between;
     padding: 4rem;
 }
-.footer a,
-.footer button {
+.footer a {
     color: #009bbb;
     font-weight: 600;
     display: flex;
     align-items: center;
 }
-.footer a:hover,
-.footer button:hover {
+.footer a:hover {
     color: #1f1f1f;
     transform: scale(1.02);
 }
@@ -19,10 +17,6 @@
     display: flex;
     align-items: center;
     gap: 0.4rem;
-}
-.modal {
-    background-color: #eaeaea;
-    width: 50%;
 }
 @media (max-width: 768px) {
     .footer {
