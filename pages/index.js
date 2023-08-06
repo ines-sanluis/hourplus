@@ -1,113 +1,243 @@
-import Head from "next/head";
 import { useEffect, useState } from "react";
-import styles from "./index.module.css";
-import { IoSend } from 'react-icons/io5';
-import {BiLoaderAlt} from 'react-icons/bi';
+import style from './index.module.css';
+import { 
+  isMoreThanShift,
+  msToString,
+  stringToMs,
+  calculateExcess
+} from "../utils/time";
+import Range from "../components/Range";
+import Time from "../components/Time";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+// 7:30 in milliseconds
+const SHIFT_DURATION = 7 * 60 * 60 * 1000 + 30 * 60 * 1000;
 
+const COLORS = {
+  extra: {
+    bg: "#F9E6C7",
+    color: "#81550E"
+  },
+  short: {
+    bg: "#F5A5A3",
+    color: "#A51512"
+  },
+  total: {
+    bg: "#BDE9EF",
+    color: "#1C6973"
+  },
+  compensate: {
+    bg: "#BDF0C1",
+    color: "#1C7323"
+  }
+}
 export default function Home() {
-  const [startTime, setStartTime] = useState("09:18");
-  const [endTime, setEndTime] = useState("19:47");
-  const [lunchTime, setLunchTime] = useState("00:00");
-  const [totalTime, setTotalTime] = useState("00:00");
-  const [defectTime, setDefectTime] = useState("00:00");
-  const [excessTime, setExcessTime] = useState("00:00");
-  const [excessTime1, setExcessTime1] = useState("00:00"); // 1 to 9
-  const [excessTime2, setExcessTime2] = useState("00:00"); // 9 to 12
-  const [excessTime3, setExcessTime3] = useState("00:00"); // 12 to 14
-  const [compensateTime, setCompensateTime] = useState("00:00")
-  const [compensateTime1, setCompensateTime1] = useState("00:00")
-  const [compensateTime2, setCompensateTime2] = useState("00:00")
-  const [compensateTime3, setCompensateTime3] = useState("00:00")
+  const [shift, setShift] = useState(SHIFT_DURATION);
+  const [startDate, setStartDate] = useState(undefined);
+  const [endDate, setEndDate] = useState(undefined);
+  const [breakTime, setBreakTime] = useState(undefined);
+  const [total, setTotal] = useState("00:00");
+  const [diff, setDiff] = useState("00:00");
+  const [extraFirstRange, setExtraFirstRange] = useState("00:00");
+  const [extraSecondRange, setExtraSecondRange] = useState("00:00");
+  const [extraThirdRange, setExtraThirdRange] = useState("00:00");
+  const [totalCompensate, setTotalCompensate] = useState("00:00");
+  const [compensateFirstRange, setCompensateFirstRange] = useState("00:00");
+  const [compensateSecondRange, setCompensateSecondRange] = useState("00:00");
+  const [compensateThirdRange, setCompensateThirdRange] = useState("00:00");
+  const [showExtraTime, setShowExtraTime] = useState(false);
 
-  const calculateExcessTime = function (totalMinutes, rangeStart, rangeEnd, rangeExcess) {
-    const rangeStartMins = convertTimeToMinutes(rangeStart)
-    const rangeEndMins = convertTimeToMinutes(rangeEnd)
+  useEffect(() => {
+    // change document title
+    document.title = "HorasPlus";
+  }, []);
 
-    if (rangeStartMins >= totalMinutes) {
-      return "00:00"
-    } else if (totalMinutes <= rangeEndMins) {
-      return convertMinutesToTime(totalMinutes - rangeStartMins)
-    } else {
-      return rangeExcess
-    }
-  }
-
-  const sumTimesAsTime = function (array) {
-    const minutes = array.map(value => convertTimeToMinutes(value))
-    return convertMinutesToTime(minutes.reduce((partialSum, a) => partialSum + a, 0))
-  }
-
-  const calculateCompensateTime = function(excess, factor) {
-    return convertMinutesToTime(convertTimeToMinutes(excess) * factor)
-  }
-  const convertTimeToMinutes = (time) => {
-    const [hours, minutes] = time.split(":").map(Number);
-    return (hours * 60) + minutes;
-  }
-
-  const convertMinutesToTime = (minutes) => {
-    let hours = Math.floor(minutes / 60);
-    let min = minutes % 60;
-    return `${hours.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
+  const formatDateForInput = date => {
+    if (!date) return;
+    new Date(date.getTime() + new Date().getTimezoneOffset() * -60 * 1000).toISOString().slice(0, 19)
   }
 
   useEffect(() => {
-    const startMinutes = convertTimeToMinutes(startTime);
-    const endMinutes = convertTimeToMinutes(endTime);
-    const lunchMinutes = convertTimeToMinutes(lunchTime);
-
-    let totalWorkMinutes = endMinutes - startMinutes - lunchMinutes;
-    setTotalTime(convertMinutesToTime(totalWorkMinutes));
-  }, [startTime, endTime, lunchTime])
-
-  useEffect(() => {
-    const totalMinutes = convertTimeToMinutes(totalTime);
-    const hours = convertTimeToMinutes("07:30")
-    if (totalMinutes <= hours) {
-      setDefectTime(convertMinutesToTime(hours - totalMinutes))
-      setExcessTime("00:00")
-      setExcessTime1("00:00")
-      setExcessTime2("00:00")
-      setExcessTime3("00:00")
-      setCompensateTime("00:00")
-      setCompensateTime1("00:00")
-      setCompensateTime2("00:00")
-      setCompensateTime3("00:00")
-    } else {
-      setDefectTime("00:00")
-      var excess = totalMinutes - hours
-      setExcessTime(convertMinutesToTime(excess))
-      const excess1 = calculateExcessTime(totalMinutes, "07:30", "09:00", "01:30");
-      setExcessTime1(excess1)
-      const excess2 = calculateExcessTime(totalMinutes, "09:00", "12:00", "03:00");
-      setExcessTime2(excess2)
-      const excess3 = calculateExcessTime(totalMinutes, "12:00", "14:00", "02:00");
-      setExcessTime3(excess3)
-      const compensate1 = calculateCompensateTime(excess1, 1);
-      setCompensateTime1(compensate1)
-      const compensate2 = calculateCompensateTime(excess2, 1.5);
-      setCompensateTime2(compensate2)
-      const compensate3 = calculateCompensateTime(excess3, 2);
-      setCompensateTime3(compensate3)
-      setCompensateTime(sumTimesAsTime([compensate1, compensate2, compensate3]))
+    if (!startDate || !endDate) return;
+    // Calculate total hours
+    let diffInMilliSeconds = endDate - startDate; 
+    if (breakTime) {
+      diffInMilliSeconds -= breakTime;
     }
-  }, [totalTime, defectTime])
+    setTotal(msToString(diffInMilliSeconds));
+    const excess1 = calculateExcess(diffInMilliSeconds, "7:30", "09:00", "01:30", false);
+    const excess2 = calculateExcess(diffInMilliSeconds,"09:00", "12:00", "03:00", false);
+    const excess3 = calculateExcess(diffInMilliSeconds, "12:00", "14:00", "02:00", false);
+    if(isMoreThanShift(diffInMilliSeconds, shift)) { // Extra time
+      setShowExtraTime(true);
+      // Extra time
+      setDiff(msToString(diffInMilliSeconds - shift));
+      setExtraFirstRange(msToString(excess1));
+      setExtraSecondRange(msToString(excess2));
+      setExtraThirdRange(msToString(excess3));
+      // Compensate time
+      setCompensateFirstRange(msToString(excess1));
+      setCompensateSecondRange(msToString(excess2 * 1.5));
+      setCompensateThirdRange(msToString(excess3 * 2));
+      setTotalCompensate(msToString(excess1 + excess2 * 1.5 + excess3 * 2));
+    } else { // Calculate owing time
+      setShowExtraTime(false);
+      setDiff(msToString(shift - diffInMilliSeconds));
+    }
+  }, [startDate, endDate, breakTime]);
 
   return (
-    <div>
-      <input value={startTime} onChange={e => setStartTime(e.target.value)} />
-      <input value={endTime} onChange={e => setEndTime(e.target.value)} />
-      <input value={lunchTime} onChange={e => setLunchTime(e.target.value)} />
-      <p>Total time: {totalTime}</p>
-      <p>Defect time: {defectTime}</p>
-      <p>Excess time: {excessTime}</p>
-      <p>Excess time 7:30 a 9: {excessTime1}</p>
-      <p>Excess time 9 a 12: {excessTime2}</p>
-      <p>Excess time 12 a 14: {excessTime3}</p>
-      <p>Total a compensar: {compensateTime}</p>
-      <p>Compensate time 7:30 a 9: {compensateTime1}</p>
-      <p>Compensate time 9 a 12: {compensateTime2}</p>
-      <p>Compensate time 12 a 14: {compensateTime3}</p>
-    </div>
+    <>
+      <Header></Header>
+      <main>
+        <div className={style.results}>
+          {/* Total */}
+          <div>
+            <Time
+              time={msToString(shift)}
+              title="Xornada"
+            />
+            <Time
+              time={total}
+              title="Total"
+              disabled={startDate === undefined || endDate === undefined}
+              backgroundColor={COLORS.total.bg}
+              color={COLORS.total.color}
+            />
+          </div>
+          {/* Diff (extra time or short time) */}
+          <div>
+            <Time
+              time={diff}
+              title={showExtraTime ? "Exceso" : (startDate === undefined || endDate === undefined ? "Defecto/Exceso" : "Defecto")}
+              backgroundColor={COLORS[showExtraTime ? "extra" : "short"].bg}
+              color={COLORS[showExtraTime ? "extra" : "short"].color}
+              disabled={startDate === undefined || endDate === undefined}
+            />
+            <Range
+              time={extraFirstRange}
+              start="7:30"
+              end="9:00"
+              backgroundColor={COLORS.extra.bg}
+              color={COLORS.extra.color}
+              disabled={!showExtraTime}
+            />
+            <Range
+              time={extraSecondRange}
+              start="9:00"
+              end="12:00"
+              backgroundColor={COLORS.extra.bg}
+              color={COLORS.extra.color}
+              disabled={!showExtraTime}
+            />
+            <Range
+              time={extraThirdRange}
+              start="12:00"
+              end="14:00"
+              backgroundColor={COLORS.extra.bg}
+              color={COLORS.extra.color}
+              disabled={!showExtraTime}
+            />
+          </div>
+          {/* Compensate */}
+          <div>
+              <Time
+                time={totalCompensate}
+                title={"Compensar"}
+                backgroundColor={COLORS.compensate.bg}
+                color={COLORS.compensate.color}
+                disabled={!showExtraTime}
+              />
+              <Range
+                time={compensateFirstRange}
+                start="7:30"
+                end="9:00"
+                backgroundColor={COLORS.compensate.bg}
+                color={COLORS.compensate.color}
+                disabled={!showExtraTime}
+              />
+              <Range
+                time={compensateSecondRange}
+                start="9:00"
+                end="12:00"
+                backgroundColor={COLORS.compensate.bg}
+                color={COLORS.compensate.color}
+                disabled={!showExtraTime}
+              />
+              <Range
+                time={compensateThirdRange}
+                start="12:00"
+                end="14:00"
+                backgroundColor={COLORS.compensate.bg}
+                color={COLORS.compensate.color}
+                disabled={!showExtraTime}
+              />
+          </div>
+        </div>
+        <div className={style.inputs}>
+          <div className={style.input}>
+            <span>🚶</span>
+            <div>
+              <label htmlFor="start">
+                <span>Hora de entrada</span>
+              </label>
+              <input
+                id="start"
+                name="start"
+                type="datetime-local"
+                value={formatDateForInput(startDate)}
+                onChange={e => setStartDate(new Date(e.target.value))} 
+                />
+            </div>
+          </div>
+          <div className={style.input}>
+            <span>🚪</span>
+            <div>
+              <label htmlFor="end">
+                <span>Hora de saída</span>
+              </label>
+              <input
+                id="end"
+                name="end"
+                type="datetime-local" 
+                value={formatDateForInput(endDate)} 
+                onChange={e => setEndDate(new Date(e.target.value))} 
+                />
+            </div>
+          </div>
+          <div className={style.input}>
+            <span>🥪</span>
+            <div>
+              <label htmlFor="time">
+                <span>Tempo de comida</span>
+              </label>
+              <input
+                id="time"
+                name="time"
+                type="time"
+                value={msToString(breakTime)}
+                onChange={e => setBreakTime(stringToMs(e.target.value))}
+                />
+            </div>
+          </div>
+          <div className={style.input}>
+            <span>⌛ </span>
+            <div>
+              <label htmlFor="shift">
+                <span>Xornada</span>
+              </label>
+              <input
+                id="shift"
+                name="shift"
+                type="time"
+                value={msToString(shift)}
+                onChange={e => setShift(stringToMs(e.target.value))}
+                />
+            </div>
+          </div>
+        </div>
+      </main>
+      <Footer></Footer>
+    </>
   );
 }

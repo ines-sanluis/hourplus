@@ -1,10 +1,41 @@
 body {
+    font-family: "Montserrat", "Helvetica Neue", Arial, sans-serif;
+    background-color: #eaeaea;
+    color: #1f1f1f;
     margin: 0;
-    font-family: "Helvetica Neue", Arial, sans-serif;
-    padding: 20px;
+}
+main {
+    padding: 2rem 4rem;
 }
 
-input[type="number"] {
-    padding: 20px;
+input[type="datetime-local"],
+input[type="time"] {
+    padding: 10px 15px;
+    background-color: #eaeaea;
+    color: #1f1f1f;
+    box-shadow: 0 0 0 0 transparent,0 0 0 0 transparent,0 0 15px 0 rgba(0,0,0,.1);
+    border: 1px solid rgba(32,33,35,.5);
     border-radius: 12px;
+    cursor: pointer;
+}
+label {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1f1f1f;
+}
+p {
+    margin: 0;
+}
+
+main {
+    display: flex;
+    gap: 16rem;
+}
+
+@media (max-width: 768px) {
+    main {
+        flex-direction: column-reverse;
+        gap: 2rem;
+        padding: 2rem;
+    }
 }

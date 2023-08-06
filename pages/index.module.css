@@ -1,4 +1,44 @@
-.hourAndMinutes {
+.inputs {
   display: flex;
-  gap: 12px;
+  flex-direction: column;
+  gap: 24px;
+}
+.input {
+  display: flex;
+  align-items: end;
+  gap: 8px;
+  min-width: 300px;
+}
+.input > span {
+  font-size: 2rem;
+
+}
+.input div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.results {
+  display: flex;
+  gap: 0.4rem;
+}
+.results > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+@media (max-width: 768px) {
+  .inputs {
+    gap: 16px;
+  }
+  .input {
+    gap: 4px;
+  }
+  .input label {
+    font-size: 14px;
+  }
+  .results {
+    flex-direction: column;
+  }
 }
