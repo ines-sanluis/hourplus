@@ -1,10 +1,7 @@
-import React from 'react'
 import style from './styles.module.css'
 
-function Header({
-}) {
-
-    return (
+function Header () {
+  return (
         <div className={style.header}>
             <h1 className={style.title}>
                 ContaHoras
@@ -13,7 +10,7 @@ function Header({
                 Calculadora de complemento de disponibilidade
             </h2>
         </div>
-    )
+  )
 }
 
 export default Header
