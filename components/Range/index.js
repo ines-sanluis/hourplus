@@ -1,5 +1,5 @@
 import React from 'react'
-import style from './Range.module.css'
+import style from './styles.module.css'
 
 function Range({
     time,

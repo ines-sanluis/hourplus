@@ -1,5 +1,5 @@
 import React from 'react'
-import style from './Header.module.css'
+import style from './styles.module.css'
 
 function Header({
 }) {
@@ -7,7 +7,7 @@ function Header({
     return (
         <div className={style.header}>
             <h1 className={style.title}>
-                HorasPlus
+                ContaHoras
             </h1>
             <h2>
                 Calculadora de complemento de disponibilidade

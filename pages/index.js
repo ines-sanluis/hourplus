@@ -1,15 +1,19 @@
-import { useEffect, useState } from "react";
+import { useEffect, useCallback, useState } from "react";
 import style from './index.module.css';
 import { 
   isMoreThanShift,
   msToString,
   stringToMs,
-  calculateExcess
+  calculateExcess,
+  dateFormatter
 } from "../utils/time";
-import Range from "../components/Range";
 import Time from "../components/Time";
+import Range from "../components/Range";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import Checkbox from '@mui/material/Checkbox';
+import DenseTable from "../components/DenseTable";
+
 // 7:30 in milliseconds
 const SHIFT_DURATION = 7 * 60 * 60 * 1000 + 30 * 60 * 1000;
 
@@ -36,6 +40,7 @@ export default function Home() {
   const [startDate, setStartDate] = useState(undefined);
   const [endDate, setEndDate] = useState(undefined);
   const [breakTime, setBreakTime] = useState(undefined);
+  const [isFreeDay, setIsFreeDay] = useState(false);
   const [total, setTotal] = useState("00:00");
   const [diff, setDiff] = useState("00:00");
   const [extraFirstRange, setExtraFirstRange] = useState("00:00");
@@ -46,15 +51,35 @@ export default function Home() {
   const [compensateSecondRange, setCompensateSecondRange] = useState("00:00");
   const [compensateThirdRange, setCompensateThirdRange] = useState("00:00");
   const [showExtraTime, setShowExtraTime] = useState(false);
+  const [rows, setRows] = useState([]);
 
   useEffect(() => {
     // change document title
-    document.title = "HorasPlus";
+    document.title = "ContaHoras";
   }, []);
+
+  const handleCheckboxChange = useCallback((event) => {
+    setIsFreeDay(event.target.checked);
+  }, []);
+
 
   const formatDateForInput = date => {
     if (!date) return;
     new Date(date.getTime() + new Date().getTimezoneOffset() * -60 * 1000).toISOString().slice(0, 19)
+  }
+
+  const saveData = () => {
+    const data = createData(startDate, endDate, shift, totalCompensate);
+    setRows([...rows, data]);
+  }
+
+  const createData = (start, end, shift, hoursCompensate) => {
+    return { 
+      start: dateFormatter.format(start),
+      end: dateFormatter.format(end),
+      shift: msToString(shift),
+      compensate: hoursCompensate 
+    };
   }
 
   useEffect(() => {
@@ -68,14 +93,22 @@ export default function Home() {
     const excess1 = calculateExcess(diffInMilliSeconds, "7:30", "09:00", "01:30", false);
     const excess2 = calculateExcess(diffInMilliSeconds,"09:00", "12:00", "03:00", false);
     const excess3 = calculateExcess(diffInMilliSeconds, "12:00", "14:00", "02:00", false);
-    if(isMoreThanShift(diffInMilliSeconds, shift)) { // Extra time
+    if (isFreeDay) {
+      setShowExtraTime(false);
+      setCompensateFirstRange("00:00");
+      setCompensateSecondRange("00:00");
+      setCompensateThirdRange("00:00");
+      setDiff("00:00");
+      setExtraFirstRange("00:00");
+      setExtraSecondRange("00:00");
+      setExtraThirdRange("00:00");
+      setTotalCompensate(msToString(diffInMilliSeconds * 1.25));
+    } else if (isMoreThanShift(diffInMilliSeconds, shift)) {
       setShowExtraTime(true);
-      // Extra time
       setDiff(msToString(diffInMilliSeconds - shift));
       setExtraFirstRange(msToString(excess1));
       setExtraSecondRange(msToString(excess2));
       setExtraThirdRange(msToString(excess3));
-      // Compensate time
       setCompensateFirstRange(msToString(excess1));
       setCompensateSecondRange(msToString(excess2 * 1.5));
       setCompensateThirdRange(msToString(excess3 * 2));
@@ -83,8 +116,8 @@ export default function Home() {
     } else { // Calculate owing time
       setShowExtraTime(false);
       setDiff(msToString(shift - diffInMilliSeconds));
-    }
-  }, [startDate, endDate, breakTime]);
+  }
+  }, [startDate, endDate, breakTime, isFreeDay]);
 
   return (
     <>
@@ -112,7 +145,7 @@ export default function Home() {
               title={showExtraTime ? "Exceso" : (startDate === undefined || endDate === undefined ? "Defecto/Exceso" : "Defecto")}
               backgroundColor={COLORS[showExtraTime ? "extra" : "short"].bg}
               color={COLORS[showExtraTime ? "extra" : "short"].color}
-              disabled={startDate === undefined || endDate === undefined}
+              disabled={startDate === undefined || endDate === undefined || isFreeDay}
             />
             <Range
               time={extraFirstRange}
@@ -146,7 +179,7 @@ export default function Home() {
                 title={"Compensar"}
                 backgroundColor={COLORS.compensate.bg}
                 color={COLORS.compensate.color}
-                disabled={!showExtraTime}
+                disabled={!showExtraTime && !isFreeDay}
               />
               <Range
                 time={compensateFirstRange}
@@ -235,8 +268,31 @@ export default function Home() {
                 />
             </div>
           </div>
+          <div className={style.input}>
+            <span>⛱️</span>
+            <div>
+              <label>
+                <span>Día libre</span>
+              </label>
+              <Checkbox
+                checked={isFreeDay}
+                onChange={handleCheckboxChange}
+                inputProps={{ 'aria-label': 'controlled' }}
+              />
+            </div>
+          </div>
+          <div className={style.input}>
+            <span>💾</span>
+            <div>
+              <label htmlFor="save">
+                <span>Gardar</span>
+              </label>
+              <button onClick={saveData}>Gardar</button>
+            </div>
+          </div>
         </div>
       </main>
+      <DenseTable rows={rows} />
       <Footer></Footer>
     </>
   );

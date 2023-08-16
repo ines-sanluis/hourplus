@@ -1,5 +1,5 @@
 import React from 'react'
-import style from './Footer.module.css'
+import style from './styles.module.css'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
