@@ -2,7 +2,7 @@
 :root {
     --error: #d34d3e;
     --success: #4caf50;
-    --primary: #0099ff;
+    --primary: #009bbb;
     --secondary: #1c5480;
     --text-primary: #474747;
     --text-secondary: #aaa;
@@ -11,8 +11,12 @@
     --shadow: rgba(0, 0, 0, 0.1);
     --border: rgba(32, 33, 35, 0.5);
     --breakpoint: 480px;
-    --borderRadius: 12px;
+    --border-radius: 12px;
     --gutter: 8px;
     --gutter2x: 16px;
     --gutter3x: 24px;
+    --gutter4x: 32px;
+    --gutter5x: 40px;
+    --gutter6x: 48px;
+    --gutter7x: 56px;
 }

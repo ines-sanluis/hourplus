@@ -9,13 +9,38 @@ import Paper from "@mui/material/Paper"
 export default function DenseTable({ rows }) {
   return (
     <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+      <Table 
+        sx={{ 
+          minWidth: 650,
+          "& th": {
+            fontWeight: "bold",
+          }
+        }} 
+        size="small" 
+        aria-label="Timesheet"
+      >
         <TableHead>
           <TableRow>
-            <TableCell align="left">Hora Entrada</TableCell>
-            <TableCell align="left">Hora Saída</TableCell>
-            <TableCell align="left">Xornada</TableCell>
-            <TableCell align="left">Compensar</TableCell>
+            <TableCell 
+              align="left"
+            >
+              Hora Entrada
+            </TableCell>
+            <TableCell 
+              align="left"
+            >
+              Hora Saída
+            </TableCell>
+            <TableCell 
+              align="left"
+            >
+              Xornada
+            </TableCell>
+            <TableCell 
+              align="left"
+            >
+              Compensar
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -27,7 +52,7 @@ export default function DenseTable({ rows }) {
               <TableCell align="left">{row.start}</TableCell>
               <TableCell align="left">{row.end}</TableCell>
               <TableCell align="left">{row.shift}</TableCell>
-              <TableCell align="left">{row.compensate}</TableCell>
+              <TableCell align="left">{row.balance}</TableCell>
             </TableRow>
           ))}
         </TableBody>

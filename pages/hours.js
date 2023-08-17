@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback, useState } from "react"
 import style from "./index.module.css"
 import {
-  isMoreThanShift,
+  hasOverworked,
   msToString,
   stringToMs,
   calculateExcess,
@@ -12,7 +12,7 @@ import Range from "../components/Range"
 import Header from "../components/Header"
 import Footer from "../components/Footer"
 import Checkbox from "@mui/material/Checkbox"
-import DenseTable from "../components/DenseTable"
+import DenseTable from "../components/Table"
 
 // 7:30 in milliseconds
 const SHIFT_DURATION = 7 * 60 * 60 * 1000 + 30 * 60 * 1000
@@ -122,7 +122,7 @@ export default function Home() {
       setExtraSecondRange("00:00")
       setExtraThirdRange("00:00")
       setTotalCompensate(msToString(diffInMilliSeconds * 1.25))
-    } else if (isMoreThanShift(diffInMilliSeconds, shift)) {
+    } else if (hasOverworked(diffInMilliSeconds, shift)) {
       setShowExtraTime(true)
       setDiff(msToString(diffInMilliSeconds - shift))
       setExtraFirstRange(msToString(excess1))

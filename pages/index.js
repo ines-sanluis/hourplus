@@ -1,31 +1,29 @@
 import React, { useEffect, useState } from "react"
 import Head from "next/head"
-import Button from "../components/Button"
-import Google from "../components/Icons/Google"
+import { useRouter } from "next/router"
+import { USER_STATES } from "hooks/useUser"
+
+import Button from "components/Button"
+import Google from "components/Icons/Google"
 
 import { loginWithGoogle, onAuthStateChanged } from "../firebase/client"
 
 export default function Home() {
   const [user, setUser] = useState(null)
+  const router = useRouter()
 
   useEffect(() => {
     onAuthStateChanged(setUser)
   }, [])
 
+  useEffect(() => {
+    user && router.push("/home")
+  }, [user])
+
   const handleClick = () => {
-    loginWithGoogle()
-      .then((response) => {
-        const userData = response.user.user.multiFactor.user
-        setUser({
-          name: userData.displayName,
-          avatar: userData.photoURL,
-          id: userData.uid,
-          email: userData.email,
-        })
-      })
-      .catch((err) => {
-        console.log(err)
-      })
+    loginWithGoogle().catch((err) => {
+      console.log(err)
+    })
   }
 
   return (
@@ -40,18 +38,13 @@ export default function Home() {
         <h1>ContaHoras</h1>
         <h2>A ponte entre as tuas horas e o teu soldo</h2>
         <div>
-          {user === null && (
-            <Button onClick={handleClick}>
+          {user === USER_STATES.NOT_LOGGED && (
+            <Button onClick={handleClick} primary>
               <Google fill="#fff" width={24} height={24} />
               Login con Google
             </Button>
           )}
-          {user && user.avatar && (
-            <div>
-              <img src={user.avatar} alt={user.name} />
-              <strong>{user.name}</strong>
-            </div>
-          )}
+          {user === USER_STATES.NOT_KNOWN && <img src="/spinner.gif" alt="Loading" />}
         </div>
       </section>
       <style jsx>{`

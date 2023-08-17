@@ -1,21 +1,20 @@
-import { colors } from '../../styles/theme'
-
-export default function Button ({ children, onClick }) {
-  return (
+export default function Button ({ children, onClick, primary, disabled = false }) {
+    return (
     <>
-        <button onClick={onClick}>
+        <button onClick={onClick} disabled={disabled}>
             {children}
         </button>
         <style jsx>{`
         button {
             align-items: center;
-            background: ${colors.black};
+            font-family: Montserrat;
+            background: ${primary ? 'var(--text-primary)' : 'transparent'};
+            border: ${primary ? 0 : '1px solid var(--primary)'};
+            color: ${primary ? 'white' : "var(--primary)"};
             border-radius: 9999px;
-            border: 0;
-            color: #fff;
             cursor: pointer;
             display: flex;
-            font-size: 16px;
+            font-size: 0.8rem;
             font-weight: 800;
             padding: 8px 24px;
             transition: opacity .3s ease;
