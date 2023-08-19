@@ -1,16 +1,23 @@
 export const SHIFT_DURATION = 7 * 60 * 60 * 1000 + 30 * 60 * 1000
 
+export const dateFormatter = new Intl.DateTimeFormat("es-ES", {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+})
+
 export const stringToMs = (string) => {
   const [hours, minutes] = string.split(":")
   return (parseInt(hours) * 60 + parseInt(minutes)) * 60000
 }
 export const msToString = (milliSeconds) => {
-  const totalMinutes = Math.floor(milliSeconds / 60000)
+  milliSeconds = Math.abs(milliSeconds)
+const totalMinutes = Math.floor(milliSeconds / 60000)
   let hours = Math.floor(totalMinutes / 60)
   let minutes = totalMinutes % 60
-  hours = (hours < 10 ? "0" : "") + hours
-  minutes = (minutes < 10 ? "0" : "") + minutes
-  return `${hours}:${minutes}`
+  hours = hours > 0 ? `${hours}h` : ""
+  minutes = minutes > 0 ? `${minutes}m` : ""
+  return `${hours} ${minutes}`
 }
 export const getTotalHours = (startDate, endDate, breakTime) => {
   if (!startDate || !endDate) return
@@ -50,7 +57,6 @@ export const calculateCompensation = (
   const underworkedMs = {
     total: 0,
   }
-  let isOverworked = false
   const overworkedMs = {
     total: 0,
     firstRange: 0,
@@ -72,7 +78,6 @@ export const calculateCompensation = (
   if (isFreeDay) {
     compensatedMs.total = totalMs * 1.25
   } else if (hasOverworked(totalMs, shift)) {
-    isOverworked = true
     overworkedMs.total = totalMs - shift
     overworkedMs.firstRange = calculateExcess(totalMs, "7:30", "09:00", "01:30")
     overworkedMs.secondRange = calculateExcess( totalMs, "09:00", "12:00", "03:00" )
@@ -101,18 +106,9 @@ export const calculateCompensation = (
     underworked: underworkedMs,
     compensated: compensatedMs,
     isFreeDay,
-    hasOverworked: isOverworked,
   }
 }
 
 export const hasOverworked = function (msWorked, shiftDuration) {
   return msWorked > shiftDuration
 }
-
-export const dateFormatter = new Intl.DateTimeFormat("es-ES", {
-  year: "numeric",
-  month: "2-digit",
-  day: "2-digit",
-  hour: "2-digit",
-  minute: "2-digit",
-})

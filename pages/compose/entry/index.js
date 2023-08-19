@@ -15,6 +15,7 @@ import CameraIndoorIcon from '@mui/icons-material/CameraIndoor';
 import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
 import TimelapseIcon from '@mui/icons-material/Timelapse';
 import WeekendIcon from '@mui/icons-material/Weekend';
+import { useRouter } from "next/router"
 
 const STATES = {
     USER_NOT_KNOWN: 0,
@@ -29,10 +30,11 @@ export default function ComposeEntry() {
     const today = dayjs(new Date()).set('second', 0).set('millisecond', 0)
     const [startDate, setStartDate] = useState(today.set('hour', 8).set('minute', 0))
     const [endDate, setEndDate] = useState(today.set('hour', 17).set('minute', 0))
-    const [breakTime, setBreakTime] = useState(today.set('hour', 1).set('minute', 0))
+    const [breakTime, setBreakTime] = useState(today.set('hour', 0).set('minute', 0))
     const [shift, setShift] = useState(today.set('hour', 7).set('minute', 30))
     const [isFreeDay, setIsFreeDay] = useState(false)
     const user = useUser()
+    const router = useRouter()
 
     const handleSubmit = useCallback(() => {
         const result = calculateCompensation(
@@ -46,6 +48,7 @@ export default function ComposeEntry() {
         setStatus(STATES.LOADING)
         addEntry(result).then(() => {
             setStatus(STATES.SUCCESS)
+            router.push('/home')
         }).catch((err) => {
             console.log(err)
             setStatus(STATES.ERROR)
@@ -62,7 +65,7 @@ export default function ComposeEntry() {
                     message={status === STATES.SUCCESS ? "Engadido correctamente" : "Erro ao engadir"}
                     sx={{
                         "& div": {
-                            backgroundColor: "var(--secondary)",
+                            backgroundColor: status === STATES.SUCCESS ? "var(--success)" : "var(--error)",
                             color: "white",
                             borderRadius: "var(--border-radius)",
                         },
@@ -74,7 +77,7 @@ export default function ComposeEntry() {
                             <TimelineOppositeContent sx={{display: 'none'}} />
                             <TimelineSeparator>
                                 <TimelineDot sx={{
-                                    backgroundColor: 'var(--primary)'
+                                    backgroundColor: 'var(--primary)',
                                 }}>
                                     <CameraIndoorIcon />
                                 </TimelineDot>
@@ -102,6 +105,7 @@ export default function ComposeEntry() {
                                                 },
                                                 "& div": {
                                                     borderRadius: "var(--border-radius)",
+                                                    backgroundColor: "var(--white)",
                                                 },
                                             }}
                                         />
@@ -139,6 +143,7 @@ export default function ComposeEntry() {
                                                 cursor: "pointer",
                                             },
                                             "& div": {
+                                                backgroundColor: "var(--white)",
                                                 borderRadius: "var(--border-radius)",
                                             },
                                         }}
@@ -179,6 +184,7 @@ export default function ComposeEntry() {
                                                 },
                                                 "& div": {
                                                     borderRadius: "var(--border-radius)",
+                                                    backgroundColor: "var(--white)",
                                                 },
                                             }}
                                         />
@@ -218,6 +224,7 @@ export default function ComposeEntry() {
                                                 },
                                                 "& div": {
                                                     borderRadius: "var(--border-radius)",
+                                                    backgroundColor: "var(--white)",
                                                 },
                                             }}
                                         />

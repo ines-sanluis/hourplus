@@ -1,22 +1,20 @@
-import Header from "../components/Header"
-import Footer from "../components/Footer"
-import style from "./about.module.css"
+import PageLayout from "components/PageLayout"
 
-export default function Home() {
+export default function About() {
   return (
     <>
-      <Header></Header>
-      <div className={style.container}>
+    <PageLayout>
+      <div>
         <h1>Cómo se calcula?</h1>
         <section>
           <h2>Artigo 61. Complemento de dispoñibilidade</h2>
-          <ol>
-            <li>
+          <span>
+            <span>
               Aplicarase ao persoal que, previa designación pola empresa, polas
               características do seu posto de traballo, voluntariamente estea
               disposto a modificacións constantes da súa xornada e do seu
               horario de luns a domingo.
-            </li>
+            </span>
             <ol>
               <li>
                 Cómputo semanal. Percibirao o/a traballador/a que estea suxeito
@@ -27,18 +25,18 @@ export default function Home() {
                 ás condiciones do artigo 34 durante un (1) mes completo.
               </li>
             </ol>
-          </ol>
+          </span>
         </section>
         <section>
           <h2>Artigo 34. Xornada superior á ordinaria</h2>
-          <ol start="6">
-            <li>
+          <span>
+            <span>
               As convocatorias respectarán o descanso entre xornadas de 12 horas
               e, con carácter xeral, deben respectar o límite de 9 horas por
               día. Cando por necesidades da produción se supere dito límite, sen
               superar nunca as catorce (14) horas por xornada, as horas de
               exceso computaranse do seguinte xeito:
-            </li>
+            </span>
             <ol>
               <li>
                 Cando se realicen xornadas que superando as 9 horas non superen
@@ -54,10 +52,19 @@ export default function Home() {
                 respectando o establecido no artigo 33.5.1 deste convenio.
               </li>
             </ol>
-          </ol>
+          </span>
         </section>
       </div>
-      <Footer></Footer>
-    </>
+    </PageLayout>
+    <style jsx>{`
+      div {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      h2 {
+        color: var(--secondary);
+      }
+      `}</style>
+      </>
   )
 }

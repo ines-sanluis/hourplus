@@ -1,12 +1,14 @@
 /* styles/colors.css */
 :root {
     --error: #d34d3e;
+    --warning: #d3b53e;
     --success: #4caf50;
     --primary: #009bbb;
     --secondary: #1c5480;
-    --text-primary: #474747;
+    --text-primary: #363636;
     --text-secondary: #aaa;
-    --background: #f7f0f0;
+    --background: #d3d5d6;
+    --white: #f0f0f0;
     --background-secondary: #b2c7c7;
     --shadow: rgba(0, 0, 0, 0.1);
     --border: rgba(32, 33, 35, 0.5);

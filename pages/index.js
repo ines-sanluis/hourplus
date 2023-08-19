@@ -29,7 +29,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>ContaHoras 🕒</title>
+        <title>ContaHoras</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 

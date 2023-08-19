@@ -4,6 +4,7 @@ export default function Avatar ({
   withText,
   src
 }) {
+
   return (
     <>
       <div>
@@ -15,8 +16,11 @@ export default function Avatar ({
           display: flex;
           justify-content: center;
           align-items: center;
-          gap: var(--gutter);
           margin-right: var(--gutter);
+          cursor: pointer;
+          &:hover {
+            transform: scale(1.15);
+          }
         }
         img {
           border-radius: 50%;
